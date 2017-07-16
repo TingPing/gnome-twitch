@@ -1,7 +1,7 @@
 %global appid com.vinszent.GnomeTwitch
 
 Name:           gnome-twitch
-Version:        0.3.1
+Version:        0.4.1
 Release:        1%{?dist}
 Summary:        Enjoy Twitch on your GNU/Linux desktop
 
@@ -24,10 +24,8 @@ BuildRequires:  libappstream-glib
 Requires:        gstreamer1-plugins-good
 # Note that this requires rpmfusion...
 Requires:        gstreamer1-libav
-# opengl backend
-Requires:        gstreamer1(element-gtkglsink)
-# cairo backend
-Requires:        gstreamer1(element-gtksink)
+# cairo/opengl backend
+Requires:        gstreamer1-plugins-bad-free-gtk
 
 %description
 Enjoy Twitch on your GNU/Linux desktop
@@ -37,7 +35,7 @@ Enjoy Twitch on your GNU/Linux desktop
 
 %build
 # NOTE: These options change in the next release
-%meson -Dwith-player-gstreamer-cairo=true -Dwith-player-gstreamer-opengl=true -Ddo-post-install=false -Db_lundef=false
+%meson -Dbuild-player-backends=gstreamer-cairo,gstreamer-opengl
 %meson_build
 
 %install
@@ -46,8 +44,8 @@ rm -rf %{buildroot}/%{_includedir}
 %find_lang gnome-twitch
 
 # NOTE: Added next release
-#%check
-#/usr/bin/appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/*.appdata.xml
+%check
+/usr/bin/appstream-util validate-relax --nonet %{buildroot}%{_datadir}/appdata/%{appid}.appdata.xml
 
 %post
 /bin/touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
@@ -64,18 +62,20 @@ fi
 %files -f gnome-twitch.lang
 %license LICENSE
 %dir %{_libdir}/%{name}
-%dir %{_libdir}/%{name}/plugins
-%dir %{_libdir}/%{name}/plugins/player-backends
+%dir %{_libdir}/%{name}/player-backends
 %{_bindir}/%{name}
-%{_libdir}/%{name}/plugins/player-backends/*
+%{_libdir}/%{name}/player-backends/*
 %{_datadir}/applications/%{appid}.desktop
-%{_datadir}/icons/hicolor/*/apps/%{name}.png
-%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
-%{_datadir}/icons/hicolor/symbolic/apps/%{name}-symbolic.svg
+%{_datadir}/icons/hicolor/*/apps/%{appid}.png
+%{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
+%{_datadir}/icons/hicolor/symbolic/apps/%{appid}-symbolic.svg
 %{_datadir}/glib-2.0/schemas/%{appid}.gschema.xml
-#%{_datadir}/appdata/*.appdata.xml
+%{_datadir}/appdata/%{appid}.appdata.xml
 
 %changelog
+* Sat Jul 15 2017 Patrick Griffis <tingping@fedoraproject.org>
+- Update to 0.4.1
+
 * Wed Mar 8 2017 Patrick Griffis <tingping@fedoraproject.org>
 - Cleanup and update to 0.3.1
 
