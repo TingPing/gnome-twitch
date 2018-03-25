@@ -1,0 +1,3 @@
+[submodule "subprojects/irc-client"]
+	path = subprojects/irc-client
+	url = https://github.com/TingPing/irc-client.git

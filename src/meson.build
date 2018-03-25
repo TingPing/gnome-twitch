@@ -31,13 +31,16 @@ configure_file(output : 'config.h', configuration : conf_data)
 libsoup_dep = dependency('libsoup-2.4')
 json_glib_dep = dependency('json-glib-1.0')
 libpeas_gtk_dep = dependency('libpeas-gtk-1.0')
+libirc = subproject('irc-client', default_options: ['lib-only=true'])
+libirc_dep = libirc.get_variable('libirc_dep')
 
 deps_gt = [
   libgtk_dep,
   libpeas_dep,
   libpeas_gtk_dep,
   libsoup_dep,
-  json_glib_dep
+  json_glib_dep,
+  libirc_dep,
 ]
 
 if get_option('use-deprecated-webkit')
